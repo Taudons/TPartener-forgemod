@@ -1,0 +1,6 @@
+{
+    "java.project.sourcePaths": [
+        "src/main/java/com/Taudon/TPartnerMod"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
+}
