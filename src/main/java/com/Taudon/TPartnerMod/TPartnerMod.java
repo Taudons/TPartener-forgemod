@@ -1,5 +1,6 @@
 package com.taudon.tpartnermod;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
