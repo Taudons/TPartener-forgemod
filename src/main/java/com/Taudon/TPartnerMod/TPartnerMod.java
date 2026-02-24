@@ -1,4 +1,4 @@
-package com.Taudon.TPartnerMod;
+package com.taudon.tpartnermod;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
