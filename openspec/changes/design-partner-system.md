@@ -64,7 +64,7 @@ TPartnerMod (主类)
 ### Phase 1: 基础架构
 1. **注册 Capability**: 实现 `IPartnerData` 接口，定义 NBT 读写。
 2. **注册 Entity**: 创建 `TPartnerEntity`，实现基本的 `createInstance`。
-3. **注册 Item**: 创建“契约之证”，实现右键生成实体。
+3. **注册 Item**: 创建“精灵提灯”，实现右键生成实体。
 
 ### Phase 2: 交互与行为
 4. **跟随逻辑**: 实现 `FollowGoal`，让实体自动跟随玩家。
