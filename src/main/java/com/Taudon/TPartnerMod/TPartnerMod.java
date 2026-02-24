@@ -38,10 +38,16 @@ public class TPartnerMod
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        // 注册 Capability 附加事件
+        MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
     }
 
     private void setup(final FMLCommonSetupEvent event)
     {
+        // 注册 Capability
+        CapabilityHelper.registerCapability();
+
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
