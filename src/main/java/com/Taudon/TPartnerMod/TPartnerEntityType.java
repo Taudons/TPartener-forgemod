@@ -26,8 +26,8 @@ public class TPartnerEntityType {
         // 在 1.16.5 SRG 中，使用 EntityType.Builder.create() 的重载版本
         // 或者直接使用 EntityType.Builder.of() 方法
         
-        // 方法1: 使用 EntityType.Builder.of() - 简单版本
-        EntityType<TPartnerEntity> entityType = EntityType.Builder.of(
+        // 方法1: 使用 EntityType.Builder.create() - MCP 版本
+        EntityType<TPartnerEntity> entityType = EntityType.Builder.create(
             new EntityType.IFactory<TPartnerEntity>() {
                 @Override
                 public TPartnerEntity create(EntityType<TPartnerEntity> type, World world) {

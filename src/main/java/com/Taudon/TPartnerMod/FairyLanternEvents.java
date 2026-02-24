@@ -2,128 +2,84 @@ package com.taudon.tpartnermod;
 
 import com.taudon.tpartnermod.item.FairyLanternItem;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.lang.reflect.Field;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * 处理精灵提灯的右键交互事件
- * 使用反射访问 1.16.5 SRG 映射的私有字段
+ * 处理精灵提灯的右键交互事件 - MCP 版本
  */
 public class FairyLanternEvents {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @SubscribeEvent
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        LOGGER.info("[FairyLanternEvents] onRightClickItem called!");
+        
         PlayerEntity player = event.getPlayer();
         ItemStack stack = event.getItemStack();
         
         // 检查是否是精灵提灯
-        if (!isFairyLantern(stack)) {
+        if (!(stack.getItem() instanceof FairyLanternItem)) {
+            LOGGER.info("[FairyLanternEvents] Not a FairyLantern item");
             return;
         }
-
-        World world = event.getWorld();
         
-        // 只在服务器端执行
-        if (isClientWorld(world)) {
+        LOGGER.info("[FairyLanternEvents] This is a FairyLantern!");
+
+        // 使用 getWorld 获取 ServerWorld
+        if (!(event.getWorld() instanceof ServerWorld)) {
+            LOGGER.info("[FairyLanternEvents] Not a server world, skipping");
             return;
         }
-
-        // 尝试生成伙伴实体
-        boolean spawned = spawnPartner(world, player);
         
-        if (spawned) {
-            // 消耗一个物品
+        ServerWorld world = (ServerWorld) event.getWorld();
+        LOGGER.info("[FairyLanternEvents] Running on server");
+
+        // 获取玩家位置
+        double x = player.getPosX();
+        double y = player.getPosY();
+        double z = player.getPosZ();
+        
+        LOGGER.info("[FairyLanternEvents] Player position: " + x + ", " + y + ", " + z);
+        
+        // 在玩家位置上方生成实体
+        double spawnX = x;
+        double spawnY = y + 1.0;
+        double spawnZ = z;
+
+        LOGGER.info("[FairyLanternEvents] Spawn position: " + spawnX + ", " + spawnY + ", " + spawnZ);
+
+        // 创建伙伴实体 - 使用 EntityType 创建
+        Entity entity = null;
+        if (TPartnerEntityType.PARTNER_ENTITY_TYPE != null) {
+            entity = TPartnerEntityType.PARTNER_ENTITY_TYPE.create(world);
+        } else {
+            // 后备：创建猪实体
+            entity = EntityType.PIG.create(world);
+        }
+        LOGGER.info("[FairyLanternEvents] Created entity: " + entity);
+        
+        if (entity != null) {
+            // 设置位置 - 使用 setPositionAndRotation
+            entity.setPositionAndRotation(spawnX, spawnY, spawnZ, player.rotationYaw, player.rotationPitch);
+            LOGGER.info("[FairyLanternEvents] Set position");
+            
+            // 添加到世界
+            world.addEntity(entity);
+            LOGGER.info("[FairyLanternEvents] Added entity to world");
+            
+            // 消耗物品
             stack.shrink(1);
-            event.setCanceled(true);
+            LOGGER.info("[FairyLanternEvents] Shrunk item, now has " + stack.getCount());
+        } else {
+            LOGGER.error("[FairyLanternEvents] Entity is null!");
         }
-    }
-
-    /**
-     * 检查是否是精灵提灯
-     */
-    private boolean isFairyLantern(ItemStack stack) {
-        return stack.getItem() instanceof FairyLanternItem;
-    }
-
-    /**
-     * 检查是否是客户端世界 (使用反射访问 field_72995_K)
-     */
-    private boolean isClientWorld(World world) {
-        try {
-            Field isRemoteField = World.class.getDeclaredField("field_72995_K");
-            isRemoteField.setAccessible(true);
-            return isRemoteField.getBoolean(world);
-        } catch (Exception e) {
-            // 如果反射失败，尝试其他方法
-            return false;
-        }
-    }
-
-    /**
-     * 生成伙伴实体 - 使用反射访问私有字段
-     */
-    private boolean spawnPartner(World world, PlayerEntity player) {
-        // 创建伙伴实体
-        TPartnerEntity entity = new TPartnerEntity(world);
-
-        // 使用反射获取玩家坐标
-        double x, y, z;
-        try {
-            // 1.16.5 SRG 字段名
-            Field posX = PlayerEntity.class.getDeclaredField("field_70165_t");
-            Field posY = PlayerEntity.class.getDeclaredField("field_70163_u");
-            Field posZ = PlayerEntity.class.getDeclaredField("field_70161_s");
-            
-            posX.setAccessible(true);
-            posY.setAccessible(true);
-            posZ.setAccessible(true);
-            
-            x = posX.getDouble(player) + 0.5;
-            y = posY.getDouble(player) + 1;
-            z = posZ.getDouble(player) + 0.5;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        // 使用反射设置实体位置
-        try {
-            // Entity.setPosition(double, double, double)
-            // 在 SRG 中可能是 setPosition 或者其他方法
-            Entity.class.getMethod("setPosition", double.class, double.class, double.class)
-                .invoke(entity, x, y, z);
-        } catch (Exception e) {
-            // 尝试直接设置字段
-            try {
-                Field posXField = Entity.class.getDeclaredField("field_70165_t");
-                Field posYField = Entity.class.getDeclaredField("field_70163_u");
-                Field posZField = Entity.class.getDeclaredField("field_70161_s");
-                posXField.setAccessible(true);
-                posYField.setAccessible(true);
-                posZField.setAccessible(true);
-                posXField.setDouble(entity, x);
-                posYField.setDouble(entity, y);
-                posZField.setDouble(entity, z);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return false;
-            }
-        }
-
-        // 使用反射添加到世界
-        try {
-            // World.addEntity(Entity)
-            World.class.getMethod("addEntity", Entity.class).invoke(world, entity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        
-        return true;
     }
 }

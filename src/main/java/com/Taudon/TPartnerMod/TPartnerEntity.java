@@ -19,10 +19,13 @@ public class TPartnerEntity extends net.minecraft.entity.Entity {
     public static final ResourceLocation ENTITY_KEY = new ResourceLocation("tpartnermod", ENTITY_ID);
 
     public TPartnerEntity(World world) {
-        super(TPartnerEntityType.PARTNER_ENTITY_TYPE, world);
+        // 如果自定义实体类型未注册，使用 PIG 作为后备
+        super(TPartnerEntityType.PARTNER_ENTITY_TYPE != null 
+            ? TPartnerEntityType.PARTNER_ENTITY_TYPE 
+            : net.minecraft.entity.EntityType.PIG, world);
     }
 
-    // 1.16.5 SRG 方法
+    // 1.16.5 MCP 方法
     protected void defineSynchedData() {
         // 注册实体同步数据
     }
@@ -31,15 +34,28 @@ public class TPartnerEntity extends net.minecraft.entity.Entity {
         // 注册实体数据参数
     }
 
-    public void readAdditionalSaveData(CompoundNBT compound) {
+    public void readAdditional(CompoundNBT compound) {
         // 从 NBT 读取数据
     }
 
-    public void addAdditionalSaveData(CompoundNBT compound) {
+    public void readAdditionalSaveData(CompoundNBT compound) {
+        // 从 NBT 读取数据 (SRG 兼容)
+    }
+
+    public void writeAdditional(CompoundNBT compound) {
         // 写入数据到 NBT
     }
 
+    public void addAdditionalSaveData(CompoundNBT compound) {
+        // 写入数据到 NBT (SRG 兼容)
+    }
+
     public IPacket<?> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    // MCP 方法 - 替代 getAddEntityPacket
+    public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
