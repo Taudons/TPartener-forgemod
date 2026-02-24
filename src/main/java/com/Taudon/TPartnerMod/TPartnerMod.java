@@ -1,8 +1,10 @@
 package com.taudon.tpartnermod;
 
-import net.minecraft.entity.Entity;
+import com.taudon.tpartnermod.item.FairyLanternItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -42,6 +44,9 @@ public class TPartnerMod
 
         // 注册 Capability 附加事件
         MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
+
+        // 注册精灵提灯交互事件
+        MinecraftForge.EVENT_BUS.register(new FairyLanternEvents());
     }
 
     private void setup(final FMLCommonSetupEvent event)
@@ -87,6 +92,15 @@ public class TPartnerMod
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
+        }
+
+        @SubscribeEvent
+        public static void onItemsRegistry(final RegistryEvent.Register<Item> itemRegistryEvent) {
+            // 注册精灵提灯物品
+            itemRegistryEvent.getRegistry().register(
+                new FairyLanternItem(new Item.Properties()).setRegistryName(MOD_ID, "fairy_lantern")
+            );
+            LOGGER.info("Registered fairy lantern item");
         }
     }
 }

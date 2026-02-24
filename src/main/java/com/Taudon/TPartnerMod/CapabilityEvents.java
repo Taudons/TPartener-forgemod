@@ -15,13 +15,22 @@ public class CapabilityEvents {
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (!(event.getObject() instanceof PlayerEntity)) {
-            return;
-        }
+        Entity entity = event.getObject();
 
-        event.addCapability(
+        // 为玩家附加伙伴数据 capability
+        if (entity instanceof PlayerEntity) {
+            event.addCapability(
                 new ResourceLocation(TPartnerMod.MOD_ID, "partner_data"),
                 new PartnerCapabilityProvider()
-        );
+            );
+        }
+
+        // 为伙伴实体附加伙伴数据 capability
+        if (entity instanceof TPartnerEntity) {
+            event.addCapability(
+                new ResourceLocation(TPartnerMod.MOD_ID, "partner_data"),
+                new PartnerCapabilityProvider()
+            );
+        }
     }
 }

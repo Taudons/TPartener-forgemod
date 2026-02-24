@@ -19,7 +19,7 @@ public class TPartnerEntity extends net.minecraft.entity.Entity {
     public static final ResourceLocation ENTITY_KEY = new ResourceLocation("tpartnermod", ENTITY_ID);
 
     public TPartnerEntity(World world) {
-        super(EntityType.PIG, world); // 临时使用 PIG
+        super(TPartnerEntityType.PARTNER_ENTITY_TYPE, world);
     }
 
     // 1.16.5 SRG 方法
