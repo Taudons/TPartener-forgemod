@@ -1,5 +1,6 @@
 package com.taudon.tpartnermod.item;
 
+import com.taudon.tpartnermod.util.Constants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,16 +10,16 @@ import net.minecraft.world.World;
 
 /**
  * 精灵提灯 - 右键使用时生成伙伴实体
- * 实际生成逻辑在 FairyLanternEvents 中处理
  */
 public class FairyLanternItem extends Item {
 
-    public FairyLanternItem(Properties properties) {
-        super(properties);
+    public FairyLanternItem() {
+        super(new Item.Properties());
+        this.setRegistryName(Constants.MOD_ID, Constants.ITEM_FAIRY_LANTERN_ID);
     }
 
     /**
-     * 处理右键点击 - 直接返回 PASS，让 FairyLanternEvents 处理
+     * 处理右键点击 - 实际逻辑在事件中处理
      */
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {

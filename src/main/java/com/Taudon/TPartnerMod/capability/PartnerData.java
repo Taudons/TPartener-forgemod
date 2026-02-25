@@ -1,24 +1,27 @@
-package com.taudon.tpartnermod;
+package com.taudon.tpartnermod.capability;
 
 import net.minecraft.nbt.CompoundNBT;
 
 /**
- * 伙伴数据实现类，实现 IPartnerData 接口
+ * 伙伴数据实现类
  */
 public class PartnerData implements IPartnerData {
 
     private static final String NBT_NAME = "PartnerName";
     private static final String NBT_LEVEL = "PartnerLevel";
     private static final String NBT_EXPERIENCE = "PartnerExperience";
+    private static final String NBT_PARTNER_UUID = "PartnerUuid";
 
     private String name;
     private int level;
     private int experience;
+    private String partnerUuid;
 
     public PartnerData() {
         this.name = "Partner";
         this.level = 1;
         this.experience = 0;
+        this.partnerUuid = "";
     }
 
     @Override
@@ -52,11 +55,22 @@ public class PartnerData implements IPartnerData {
     }
 
     @Override
+    public String getPartnerUuid() {
+        return partnerUuid;
+    }
+
+    @Override
+    public void setPartnerUuid(String uuid) {
+        this.partnerUuid = uuid;
+    }
+
+    @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putString(NBT_NAME, this.name);
         nbt.putInt(NBT_LEVEL, this.level);
         nbt.putInt(NBT_EXPERIENCE, this.experience);
+        nbt.putString(NBT_PARTNER_UUID, this.partnerUuid);
         return nbt;
     }
 
@@ -70,6 +84,9 @@ public class PartnerData implements IPartnerData {
         }
         if (nbt.contains(NBT_EXPERIENCE)) {
             this.experience = nbt.getInt(NBT_EXPERIENCE);
+        }
+        if (nbt.contains(NBT_PARTNER_UUID)) {
+            this.partnerUuid = nbt.getString(NBT_PARTNER_UUID);
         }
     }
 }

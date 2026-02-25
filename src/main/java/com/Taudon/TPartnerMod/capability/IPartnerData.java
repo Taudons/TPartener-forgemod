@@ -1,9 +1,9 @@
-package com.taudon.tpartnermod;
+package com.taudon.tpartnermod.capability;
 
 import net.minecraft.nbt.CompoundNBT;
 
 /**
- * 伙伴数据接口，用于存储和检索伙伴相关数据
+ * 伙伴数据接口 - Capability 接口
  */
 public interface IPartnerData {
 
@@ -38,6 +38,16 @@ public interface IPartnerData {
     void setExperience(int experience);
 
     /**
+     * 获取伙伴 UUID
+     */
+    String getPartnerUuid();
+
+    /**
+     * 设置伙伴 UUID
+     */
+    void setPartnerUuid(String uuid);
+
+    /**
      * 序列化数据到 NBT
      */
     CompoundNBT serializeNBT();
@@ -47,3 +57,4 @@ public interface IPartnerData {
      */
     void deserializeNBT(CompoundNBT nbt);
 }
+
