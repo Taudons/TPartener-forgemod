@@ -11,7 +11,7 @@
 
 ### 技术约束
 - 使用 Minecraft Forge 1.16.5 API
-- 基于 NeoForge 的 Capability 系统
+- 基于 Forge 的 Capability 系统
 - 需要与现有模组结构兼容
 
 ## Goals / Non-Goals
